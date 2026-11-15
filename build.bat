@@ -7,8 +7,8 @@ if not exist engine (
 pushd engine
 cargo build --release || (popd & goto :fail)
 popd
-python -m pip install --upgrade pyinstaller || goto :fail
-python -m PyInstaller --noconfirm --onefile --windowed --name AssetReplacer ^
+python -m pip install --upgrade pyinstaller -r requirements.txt || goto :fail
+python -m PyInstaller --noconfirm --onefile --windowed --name AssetReplacer --collect-data sv_ttk ^
   --add-binary "engine\target\release\animation-replace-roblox.exe;." app.py || goto :fail
 echo.
 echo Done: dist\AssetReplacer.exe
