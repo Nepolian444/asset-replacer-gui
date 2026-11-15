@@ -1,0 +1,88 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Asset Replacer</title><style>
+:root{--bg:#14151a;--card:#1d1f27;--in:#14151a;--line:#2c2f3a;--tx:#eceef4;--mu:#8b90a0;--red:#ff4d4f;--yel:#ffd23f}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--tx);font:13px/1.4 "Segoe UI",system-ui,sans-serif;display:grid;grid-template-columns:1fr 350px;overflow:hidden;user-select:none}
+main{padding:22px 26px;overflow:auto;min-width:0}aside{background:#101116;border-left:1px solid var(--line);padding:22px 20px;overflow:auto}
+header{display:flex;align-items:center;gap:26px;margin-bottom:18px}
+.logo{width:30px;height:30px;border-radius:50%;background:linear-gradient(90deg,var(--red) 50%,#fff 50%)}
+nav{display:flex;gap:22px}nav a{color:var(--mu);cursor:pointer;padding:4px 0;border-bottom:2px solid transparent}nav a.on{color:var(--tx);border-color:var(--red)}
+.pill{margin-left:auto;background:var(--card);padding:7px 14px;border-radius:20px;display:flex;gap:8px;align-items:center}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--mu);flex:none}.run .dot{background:var(--yel);animation:p 1s infinite}.ok .dot{background:#2ecc71}.bad .dot{background:var(--red)}@keyframes p{50%{opacity:.3}}
+h1{font-size:26px;margin:0 0 2px;font-weight:600}.sub{color:var(--mu);margin-bottom:18px}
+.grid{display:grid;gap:14px;margin-bottom:14px}.g4{grid-template-columns:repeat(4,1fr)}.g2{grid-template-columns:1fr 1.25fr}
+.card{background:var(--card);border-radius:14px;padding:16px 18px}.card h3{margin:0 0 12px;font-size:13px;font-weight:600}
+.stat span{color:var(--mu);font-size:12px}.stat b{display:block;font-size:26px;font-weight:600;margin-top:2px}
+.donut{display:flex;gap:18px;align-items:center}.donut svg{width:150px;height:150px;flex:none}.leg{flex:1}
+.row{display:flex;align-items:center;gap:10px;margin:7px 0}.row i{width:10px;height:10px;border-radius:50%;flex:none}.row .n{width:70px}.row .c{margin-left:auto;color:var(--mu);font-variant-numeric:tabular-nums}
+.bar{flex:1;height:8px;background:#2a2d38;border-radius:6px;overflow:hidden}.bar u{display:block;height:100%;border-radius:6px;transition:width .3s}
+.big{height:12px;margin:6px 0 14px}.big u{background:linear-gradient(90deg,var(--red),var(--yel))}.big.scan u{width:35%!important;animation:s 1.2s infinite ease-in-out}@keyframes s{0%{margin-left:-35%}100%{margin-left:100%}}
+#log{height:230px;overflow:auto;font:11.5px/1.5 "Cascadia Mono",Consolas,monospace;background:var(--in);border-radius:10px;padding:10px;user-select:text;white-space:pre-wrap}
+#log .e{color:#ff7b72}#log .m{color:var(--mu)}.hide{display:none!important}
+label.f{display:block;color:var(--mu);font-size:11px;margin:12px 0 5px;text-transform:uppercase;letter-spacing:.06em}
+input[type=text],input[type=password]{width:100%;background:var(--in);border:1px solid var(--line);border-radius:9px;padding:9px 11px;color:var(--tx);font:inherit;outline:0;user-select:text}input:focus{border-color:var(--red)}
+.two{display:flex;gap:8px}.two>*{flex:1}.pick{display:flex;gap:6px}.pick input{flex:1}
+button{background:#2a2d38;color:var(--tx);border:0;border-radius:9px;padding:9px 14px;font:inherit;cursor:pointer}button:hover{background:#343847}
+button.p{background:var(--red);font-weight:600}button.p:hover{background:#ff6668}button:disabled{opacity:.4;cursor:default}
+.chips{display:flex;flex-wrap:wrap;gap:7px}.chip{padding:6px 11px;border-radius:16px;border:1px solid var(--line);cursor:pointer;display:flex;gap:6px;align-items:center;color:var(--mu)}.chip i{width:8px;height:8px;border-radius:50%}.chip.on{color:var(--tx);background:#262932}
+.sw{display:flex;align-items:center;justify-content:space-between;margin:9px 0;cursor:pointer}.sw s{width:34px;height:19px;border-radius:12px;background:#2a2d38;position:relative;transition:.2s}.sw s:after{content:"";position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:#fff;transition:.2s}.sw.on s{background:var(--red)}.sw.on s:after{left:17px}
+.note{color:var(--mu);font-size:11px;margin-top:4px}.acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}.acts .p{grid-column:1/3;padding:12px}
+</style></head><body>
+<main>
+<header><div class="logo"></div><nav><a id="n1" class="on" onclick="tab(1)">Dashboard</a><a id="n2" onclick="tab(2)">Log</a></nav><div class="pill" id="pill"><span class="dot"></span><span id="st">Idle</span></div></header>
+<div id="t1"><h1>Asset Dashboard</h1><div class="sub" id="sub">Scan your place file to see what needs re-uploading.</div>
+<div class="grid g4"><div class="card stat"><span>Assets found</span><b id="s1">0</b></div><div class="card stat"><span>Uploaded</span><b id="s2">0</b></div><div class="card stat"><span>Remaining</span><b id="s3">0</b></div><div class="card stat"><span>Time left</span><b id="s4">–</b></div></div>
+<div class="grid g2"><div class="card"><h3>Assets by type</h3><div class="donut"><svg viewBox="0 0 140 140" id="dn"></svg><div class="leg" id="leg"></div></div></div>
+<div class="card"><h3>Upload progress</h3><div class="bar big" id="bigbar"><u style="width:0"></u></div><div id="bars"></div></div></div>
+<div class="card"><h3>Uploads per 10 seconds</h3><svg viewBox="0 0 600 90" preserveAspectRatio="none" style="width:100%;height:90px" id="sp"></svg></div></div>
+<div id="t2" class="hide"><h1>Log</h1><div class="sub">Raw output from the engine (cookie and key hidden).</div><div class="card"><div id="log" style="height:calc(100vh - 190px)"></div></div></div>
+</main>
+<aside>
+<label class="f" style="margin-top:0">Roblox cookie</label><input type="password" id="cookie" placeholder=".ROBLOSECURITY">
+<label class="f">API key</label><input type="password" id="api" placeholder="Open Cloud key (Assets read + write)">
+<div class="sw" id="remember" onclick="sw(this)"><span>Keep my settings</span><s></s></div>
+<div class="note">Saves your files, options, cookie and API key on this PC, encrypted with your Windows login. Turn it off to erase them.</div>
+<label class="f">Place file</label><div class="pick"><input type="text" id="file"><button onclick="pick('in')">…</button></div>
+<label class="f">Output file</label><div class="pick"><input type="text" id="out"><button onclick="pick('out')">…</button></div>
+<div class="two"><div><label class="f">Group ID</label><input type="text" id="group" placeholder="optional"></div><div><label class="f">Threads</label><input type="text" id="threads" value="5"></div></div>
+<label class="f">Only upload (none = all)</label><div class="chips" id="chips"></div>
+<div style="margin-top:12px"><div class="sw" data-f="unformatted" onclick="sw(this)"><span>Scan unformatted IDs</span><s></s></div><div class="sw" data-f="names" onclick="sw(this)"><span>Fetch original names</span><s></s></div></div>
+<div class="acts"><button onclick="go(true)" id="bScan">Scan</button><button onclick="api().stop()" id="bStop" disabled>Stop</button><button class="p" onclick="go(false)" id="bGo">Start upload</button><button onclick="api().reveal($('out').value)" id="bOut" class="hide" style="grid-column:1/3">Show output file</button></div>
+</aside>
+<script>
+const T=[["animation","Animation","#ffd23f"],["audio","Audio","#2ecc71"],["image","Image","#e8590c"],["model","Model","#ff4d4f"],["video","Video","#a8d83f"],["mesh","Mesh","#14b8a6"]],$=i=>document.getElementById(i),api=()=>pywebview.api;
+const AL={animation:"animation",animations:"animation",audio:"audio",audios:"audio",sound:"audio",sounds:"audio",image:"image",images:"image",decal:"image",decals:"image",model:"model",models:"model",video:"video",videos:"video",mesh:"mesh",meshes:"mesh"};
+const W="animations?|audios?|sounds?|images?|decals?|models?|videos?|meshes|mesh",R_ID=new RegExp("\\b("+W+")\\b\\D{0,24}?(\\d{5,})","i"),R_N1=new RegExp("\\b(\\d+)\\s+("+W+")\\b","i"),R_N2=new RegExp("\\b("+W+")\\b\\s*[:=x]\\s*(\\d+)\\b","i"),R_UP=/Uploaded\s+(\w+)\s+(\d+)/i,R_PG=/\[(\d+)\/(\d+)\]/;
+let S;function reset(keepFound){const f=keepFound?S.found:{};S={mode:"idle",found:f,ids:{},sum:{},done:{},n:0,N:0,p0:null,b:[],bt:0}}reset();
+T.forEach(([k,n,c])=>{const e=document.createElement("div");e.className="chip";e.dataset.t=k;e.innerHTML=`<i style="background:${c}"></i>${n}`;e.onclick=()=>e.classList.toggle("on");$("chips").appendChild(e)});
+function sw(e){e.classList.toggle("on");if(e.id==="remember")api().save(cfg())}
+function tab(n){$("t1").classList.toggle("hide",n!=1);$("t2").classList.toggle("hide",n!=2);$("n1").className=n==1?"on":"";$("n2").className=n==2?"on":""}
+function cfg(){return{cookie:$("cookie").value.trim(),api:$("api").value.trim(),file:$("file").value.trim(),out:$("out").value.trim(),group:$("group").value.trim(),threads:$("threads").value.trim(),remember:$("remember").classList.contains("on"),types:[...document.querySelectorAll(".chip.on")].map(e=>e.dataset.t),flags:{unformatted:document.querySelector('[data-f=unformatted]').classList.contains("on"),names:document.querySelector('[data-f=names]').classList.contains("on")}}}
+async function pick(k){const p=await api().pick(k,$("file").value);if(!p)return;if(k=="in"){$("file").value=p;$("out").value=p.replace(/(\.[^.\\\/]+)$/,"_output$1")}else $("out").value=p}
+async function go(scan){const r=await api().run(cfg(),scan);if(r.error){alert(r.error);return}scan?reset():reset(true);S.mode=scan?"scan":"upload";$("log").textContent="";addLog("▶ "+r.cmd,"m");setSt(scan?"Scanning…":"Uploading…","run");busy(true);$("sub").textContent=scan?"Scanning your place file for assets…":"Uploading assets to your account…";$("bOut").classList.add("hide");render()}
+function busy(b){["bScan","bGo"].forEach(i=>$(i).disabled=b);$("bStop").disabled=!b}
+function setSt(t,c){$("st").textContent=t;$("pill").className="pill "+(c||"")}
+function addLog(t,c){const l=$("log"),d=document.createElement("div");if(c)d.className=c;else if(/error|failed/i.test(t))d.className="e";d.textContent=t.replace(/\n$/,"");l.appendChild(d);while(l.childElementCount>1500)l.firstChild.remove();l.scrollTop=l.scrollHeight}
+function bucket(){const n=Math.floor(Date.now()/1e4);if(S.bt!==n){if(S.bt)for(let i=S.bt+1;i<n;i++)S.b.push(0);S.b.push(0);S.bt=n;if(S.b.length>60)S.b.shift()}S.b[S.b.length-1]++}
+function parse(t){let m;if(m=R_PG.exec(t)){S.n=+m[1];S.N=+m[2];if(!S.p0)S.p0={t:Date.now(),n:S.n}}
+if(S.mode=="upload"&&(m=R_UP.exec(t))){const k=AL[m[1].toLowerCase()];if(k){S.done[k]=(S.done[k]||0)+1;bucket()}}
+else if(S.mode=="scan"){const ks=new Set();let k;if(m=R_ID.exec(t)){k=AL[m[1].toLowerCase()];(S.ids[k]??=new Set).add(m[2]);ks.add(k)}else{for(const x of t.matchAll(new RegExp(R_N1.source,"gi"))){k=AL[x[2].toLowerCase()];S.sum[k]=Math.max(S.sum[k]||0,+x[1]);ks.add(k)}for(const x of t.matchAll(new RegExp(R_N2.source,"gi"))){k=AL[x[1].toLowerCase()];S.sum[k]=Math.max(S.sum[k]||0,+x[2]);ks.add(k)}}
+ks.forEach(k=>S.found[k]=Math.max(S.ids[k]?S.ids[k].size:0,S.sum[k]||0))}}
+window.onEvents=ev=>{ev.forEach(e=>{if(e.k=="line"){addLog(e.t);parse(e.t)}else{const ok=e.code==0,was=S.mode;S.mode="idle";busy(false);S.p0=null;
+if(was=="scan"){const n=tot();setSt(ok?"Scan complete":"Scan stopped",ok?"ok":"bad");$("sub").textContent=n?`${n} assets need uploading. Review the chart, then press Start upload.`:ok?"Scan finished but no asset counts were recognised — open the Log tab and send it to me.":"Scan stopped."}
+else{setSt(ok?"Finished":"Stopped",ok?"ok":"bad");$("sub").textContent=ok?"Done. Open the output file in Roblox Studio.":"Stopped before finishing.";if(ok){S.n=S.N;$("bOut").classList.remove("hide")}}}});render()};
+const tk=k=>Math.max(S.found[k]||0,S.done[k]||0),tot=()=>T.reduce((a,[k])=>a+tk(k),0),dn=()=>Math.max(S.n,T.reduce((a,[k])=>a+(S.done[k]||0),0));
+const fm=s=>{s=Math.round(s);return s>=3600?Math.floor(s/3600)+"h "+String(Math.floor(s%3600/60)).padStart(2,"0")+"m":s>=60?Math.floor(s/60)+"m "+String(s%60).padStart(2,"0")+"s":s+"s"};
+function render(){const total=Math.max(tot(),S.N),d=dn();$("s1").textContent=total;$("s2").textContent=d;$("s3").textContent=Math.max(0,total-d);
+let eta="–";if(S.p0&&S.n>S.p0.n){const r=(S.n-S.p0.n)/((Date.now()-S.p0.t)/1e3);if(r>0)eta=fm((S.N-S.n)/r)}$("s4").textContent=S.mode=="upload"?eta:"–";
+const bb=$("bigbar");bb.className="bar big"+(S.mode=="scan"?" scan":"");bb.firstChild.style.width=(total?Math.min(100,d/total*100):0)+"%";
+const C=2*Math.PI*54;let off=0,svg=`<circle cx="70" cy="70" r="54" fill="none" stroke="#2a2d38" stroke-width="18"/>`,leg="",bars="";
+T.forEach(([k,n,c])=>{const v=tk(k),dv=S.done[k]||0;if(v&&total){const l=v/ (T.reduce((a,[x])=>a+tk(x),0))*C;svg+=`<circle cx="70" cy="70" r="54" fill="none" stroke="${c}" stroke-width="18" stroke-dasharray="${l} ${C-l}" stroke-dashoffset="${-off}" transform="rotate(-90 70 70)"/>`;off+=l}
+leg+=`<div class="row"><i style="background:${c}"></i><span class="n">${n}</span><span class="c">${v}</span></div>`;bars+=`<div class="row"><i style="background:${c}"></i><span class="n">${n}</span><div class="bar"><u style="width:${v?dv/v*100:0}%;background:${c}"></u></div><span class="c">${dv}/${v}</span></div>`});
+svg+=`<text x="70" y="68" text-anchor="middle" fill="#eceef4" font-size="22" font-weight="600">${tot()}</text><text x="70" y="86" text-anchor="middle" fill="#8b90a0" font-size="10">assets</text>`;
+$("dn").innerHTML=svg;$("leg").innerHTML=leg;$("bars").innerHTML=bars;
+const b=S.b.length?S.b:[0],mx=Math.max(1,...b),pts=b.map((v,i)=>[b.length>1?i/(b.length-1)*600:0,80-v/mx*70]);
+$("sp").innerHTML=`<defs><linearGradient id="g" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ff4d4f" stop-opacity=".35"/><stop offset="1" stop-color="#ff4d4f" stop-opacity="0"/></linearGradient></defs><polygon points="0,90 ${pts.map(p=>p.join(",")).join(" ")} 600,90" fill="url(#g)"/><polyline points="${pts.map(p=>p.join(",")).join(" ")}" fill="none" stroke="#ff4d4f" stroke-width="2" vector-effect="non-scaling-stroke"/>`}
+setInterval(()=>{if(S.mode!="idle")render()},1000);render();
+window.addEventListener("pywebviewready",async()=>{const s=await api().init();for(const k of["cookie","api","file","out","group","threads"])if(s[k])$(k).value=s[k];(s.types||[]).forEach(t=>document.querySelector(`.chip[data-t=${t}]`).classList.add("on"));
+for(const f in s.flags||{})if(s.flags[f])document.querySelector(`[data-f=${f}]`).classList.add("on");if(s.remember)$("remember").classList.add("on")});
+</script></body></html>
